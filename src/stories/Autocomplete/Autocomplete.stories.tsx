@@ -41,9 +41,13 @@ const defaultOptions = [
 const DefaultAutocomplete = () => {
   const [value, setValue] = useState('');
   const [options, setOptions] = useState<string[]>(defaultOptions)
-  const onSearch = (searchValue: string) => {
-    if (!value) setOptions([])
+  const [isSearching, setIsSearching] = useState<boolean>(false)
+  const onSearch = async (searchValue: string) => {
+    if (!searchValue) setOptions([])
+    setIsSearching(true)
+    await new Promise(resolve => setTimeout(() => resolve("some value"), 1000));
     setOptions(defaultOptions.filter(a => a.includes(searchValue)))
+    setIsSearching(false)
   }
   return (
     <Autocomplete
@@ -52,6 +56,7 @@ const DefaultAutocomplete = () => {
       options={options}
       onSearch={onSearch}
       label="Autocomplete"
+      isSearching={isSearching}
     />
   );
 };

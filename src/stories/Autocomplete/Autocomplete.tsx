@@ -29,6 +29,12 @@ export interface AutocompleteProps {
 
   // handle on select event
   onSelect?: (value: string) => void
+
+  // searching state
+  isSearching?: boolean
+
+  // searching text
+  searchingText?: string
 }
 
 /** Primary UI component for input with autocompletion */
@@ -41,6 +47,8 @@ export const Autocomplete = ({
   value,
   onSearch,
   onSelect,
+  isSearching,
+  searchingText = 'Loading...'
 }: AutocompleteProps) => {
   const [isfocused, setIsFocused] = useState(false)
   const [internalValue, setInternalValue] = useState(value || '')
@@ -73,6 +81,7 @@ export const Autocomplete = ({
     setShowOptions(false)
   }
 
+  const optionsContainerStyle = { top: inputWrapperRef?.current?.clientHeight + 8 }
   return (
     <>
       {label && (
@@ -84,16 +93,25 @@ export const Autocomplete = ({
         <div ref={inputWrapperRef} className={`input-wrapper ${isfocused ? 'input-active' : ''}`} onClick={onClickInput}>
           <input value={value} onChange={onChangeEvent} ref={ref} onFocus={onfocus} onBlur={onBlur} defaultValue={defaultValue || ''} />
         </div>
-        {showOptions && (
-          <div className="options-container" style={{ top: inputWrapperRef?.current?.clientHeight + 8 }}>
-            {options?.map((option: string) => (
-              <div className="option-item" key={option} onClick={() => handleOnSelect(option)}>
-                {option}
-              </div>
-            ))}
+        {isSearching ? (
+          <div className="options-container searching" style={optionsContainerStyle}>
+            {searchingText}
           </div>
+        ) : (
+          <>
+            {showOptions && (
+              <div className="options-container" style={optionsContainerStyle}>
+                {options?.map((option: string) => (
+                  <div className="option-item" key={option} onClick={() => handleOnSelect(option)}>
+                    {option}
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
         )}
-      </div>
+
+      </div >
     </>
   );
 };
